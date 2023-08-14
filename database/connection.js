@@ -12,19 +12,12 @@ const PurchaseProduct = require('../models/PurchaseProductModel');
 const Supplier = require('../models/SupplierModel');
 const Login = require('../models/LoginModel');
 
+const models = [Product, Category,Cliente, Address, Telephone, SaleProduct, OrderItem, Payment, PurchaseProduct, Supplier, Login];
+
 const sequelize = new Sequelize(dbConfig);
 
-Product.init(sequelize);
-Category.init(sequelize);
-Cliente.init(sequelize);
-Address.init(sequelize);
-Telephone.init(sequelize);
-SaleProduct.init(sequelize);
-OrderItem.init(sequelize)
-Payment.init(sequelize);
-PurchaseProduct.init(sequelize);
-Supplier.init(sequelize);
-Login.init(sequelize);
+models.forEach((model)=> model.init(sequelize));
+
 
 Cliente.hasMany(Telephone);
 Telephone.belongsTo(Cliente);
