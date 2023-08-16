@@ -13,6 +13,7 @@ Uma API para gerenciamento de pedidos, permitindo criar, visualizar e gerenciar 
 - [Rotas](#rotas)
 - [Demais Rotas](#demais-rotas)
 - [Contato](#contato)
+- [Diagrama ER](#diagrama-er)
 
 ## Visão Geral
 
