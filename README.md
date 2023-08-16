@@ -12,8 +12,6 @@ Uma API para gerenciamento de pedidos, permitindo criar, visualizar e gerenciar 
 - [Uso](#uso)
 - [Rotas](#rotas)
 - [Demais Rotas](#demais-rotas)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
 - [Contato](#contato)
 
 ## Visão Geral
@@ -50,4 +48,9 @@ A API oferece as seguintes rotas principais:
 ## Contato
 
 Para mais informações, entre em contato pelo email: alexandrelimaxxxx@gmail.com
+
+## Diagrama ER
+![diagramaER](https://github.com/Alexandrelimax/SaleSystem/assets/96657257/8ee9c968-fad3-4033-889f-710ab7efce64)
+
+
 
