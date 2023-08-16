@@ -1,12 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
 
-module.exports = class SaleProduct extends Model {
+module.exports = class Order extends Model {
     static init(sequelize) {
         super.init({
-            order_date: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            },
             client_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -30,10 +26,10 @@ module.exports = class SaleProduct extends Model {
         },
             {
                 sequelize,
-                modelName: 'sale_product',
+                modelName: 'order',
             })
     }
-    efetuarPagamento(){
-        
-    }
+
 }
+
+

@@ -25,25 +25,28 @@ module.exports = class Address extends Model {
                 allowNull: false,
             },
             city:{
-                type:DataTypes.INTEGER,
+                type:DataTypes.STRING,
                 allowNull: false,
                 
             },
             state:{
-                type:DataTypes.INTEGER,
+                type:DataTypes.STRING,
                 allowNull: false,
                 
             },
             client_id:{
                 type:DataTypes.INTEGER,
-                allowNull: false,
                 references:{model: 'clients', key: 'id'},
                 onDelete: 'CASCADE'
             },
             supplier_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
                 references: { model: 'suppliers', key: 'id' },
+                onDelete: 'CASCADE',
+            },
+            order_id:{
+                type:DataTypes.INTEGER,
+                references:{model:'orders', key: 'id'},
                 onDelete: 'CASCADE',
             },
         },

@@ -7,18 +7,13 @@ const session = require('express-session');
 const sessionClient = require('./middlewares/middlewarerSession');
 const supplierRoutes = require('./routes/suppliersRoutes');
 const clientRoutes = require('./routes/clientRoutes');
-const saleRoutes = require('./routes/saleRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 const authRoutes = require('./routes/authRoutes');
-const purchaseRoutes = require('./routes/purchaseRoutes');
 const productRoutes = require('./routes/productRoutes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
-
-app.engine('handlebars', exphbs.engine());
-app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'views'));
 
 
 app.use(session({
@@ -38,12 +33,11 @@ app.use(sessionClient);
 //ROUTES
 app.use('/',authRoutes);
 app.use('/',clientRoutes);
-app.use('/',saleRoutes);
-app.use('/',purchaseRoutes);
+app.use('/',orderRoutes);
 app.use('/',supplierRoutes);
 app.use('/',productRoutes);
 
-app.use('/', (req, res) => res.status(404).render('notFound'));
+app.use('/', (req, res) => res.status(404).json({message: 'Esta rota não existe'}));
 
 sequelize
   .sync()

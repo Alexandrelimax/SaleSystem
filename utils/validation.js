@@ -16,15 +16,13 @@ const validName =(element, collectionErrors)=> {
          collectionErrors.push('Os campos de nome e sobrenome devem conter apenas letras maiúsculas e minúsculas!');
     }
 }
-const dateFormat = (date)=>{
-    if(!date){
-        date = new Date();
-    }else{
-
+const validCPF = (cpf,collectionErrors)=>{
+    if (cpf.length !== 11) {
+        collectionErrors.push('CPF inválido');
     }
 }
 
 
 
 
-module.exports = {isEmpty, validName, dateFormat} ;
+module.exports = {isEmpty, validName, validCPF} ;

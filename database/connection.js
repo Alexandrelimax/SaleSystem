@@ -5,15 +5,15 @@ const Category = require('../models/CategoryModel');
 const Cliente = require('../models/ClienteModel');
 const Telephone = require('../models/TelephoneModel');
 const Address = require('../models/AddressModel');
-const OrderItem = require('../models/ItemPedido');
-const SaleProduct = require('../models/SaleProduct');
+const OrderItem = require('../models/OrderItem');
 const Payment = require('../models/Payment');
 const PurchaseProduct = require('../models/PurchaseProductModel');
 const Supplier = require('../models/SupplierModel');
 const Login = require('../models/LoginModel');
+const Order = require('../models/OrderModel');
 
 const models = [Product, Category,
-Cliente, Address, Telephone, SaleProduct, OrderItem, Payment, PurchaseProduct, Supplier, Login];
+Cliente, Address, Telephone, Order, OrderItem, Payment, PurchaseProduct, Supplier, Login];
 
 const sequelize = new Sequelize(dbConfig);
 
@@ -24,10 +24,9 @@ Cliente.hasMany(Telephone);
 Telephone.belongsTo(Cliente);
 Cliente.hasMany(Address);
 Address.belongsTo(Cliente);
-Address.belongsTo(SaleProduct);
-Payment.belongsTo(SaleProduct);
-SaleProduct.hasOne(Address);
-SaleProduct.hasOne(Payment);
+Address.belongsTo(Order);
+Order.hasOne(Address);
+Order.belongsTo(Payment);
 Supplier.hasMany(Telephone);
 Telephone.belongsTo(Supplier);
 Supplier.hasMany(Address);
@@ -38,8 +37,8 @@ Login.belongsTo(Cliente)
 Product.belongsToMany(Category, { through: 'product_category' });
 Category.belongsToMany(Product, { through: 'product_category' });
 
-SaleProduct.belongsToMany(Product, { through: 'order_item' });
-Product.belongsToMany(SaleProduct, { through: 'order_item' })
+Order.belongsToMany(Product, { through: 'order_item' });
+Product.belongsToMany(Order, { through: 'order_item' })
 
 Product.belongsToMany(Supplier, { through: 'purchase_product' });
 Supplier.belongsToMany(Product, { through: 'purchase_product' });
