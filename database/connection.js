@@ -12,7 +12,8 @@ const PurchaseProduct = require('../models/PurchaseProductModel');
 const Supplier = require('../models/SupplierModel');
 const Login = require('../models/LoginModel');
 
-const models = [Product, Category,Cliente, Address, Telephone, SaleProduct, OrderItem, Payment, PurchaseProduct, Supplier, Login];
+const models = [Product, Category,
+Cliente, Address, Telephone, SaleProduct, OrderItem, Payment, PurchaseProduct, Supplier, Login];
 
 const sequelize = new Sequelize(dbConfig);
 

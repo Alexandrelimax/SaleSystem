@@ -9,14 +9,16 @@ module.exports = {
 
         try {
             const suppliers = await Supplier.findAll();
-            res.status(200).json({ message: suppliers })
+            res.status(200).json(suppliers)
         } catch (error) {
+            console.log(error);
             res.status(500).json({ erro: error })
         }
     },
+
+
     async saveSupplier(req, res) {
         const collectionErrors = [];
-        // validation.isEmpty(req.body, collectionErrors);
         const { company, cnpj, business_name } = req.body;
 
 
@@ -28,17 +30,18 @@ module.exports = {
             return res.status(400).json({ message: collectionErrors });
         }
 
-        const supplier = { company, cnpj, business_name };
-
         try {
+            const supplier = { company, cnpj, business_name };
+
             await Supplier.create(supplier);
             res.status(201).json({ message: 'O fornecedor foi salvo com sucesso!' });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ message: 'Não foi possivel salva, tente mais tarde!' });
+            res.status(500).json({ message: 'Não foi possivel salvar, tente mais tarde!' });
         }
-
     },
+
+
     async getSupplier(req, res) {
 
         const { id } = req.params;
@@ -46,6 +49,7 @@ module.exports = {
         if (id <= 0) {
             return res.status(400).json('Usuário inválido')
         }
+
         try {
             const supplier = await Supplier.findByPk(id);
             res.status(200).json(supplier);
@@ -55,6 +59,8 @@ module.exports = {
             res.status(500).json({ message: 'Não foi possivel encontrar o usuário' });
         }
     },
+
+
     async setSupplier(req, res) {
         const { id } = req.params;
 
@@ -78,12 +84,14 @@ module.exports = {
             res.status(201).json({ message: 'O fornecedor foi atualizado com sucesso!' });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ message: 'Erro ao atualizar' });
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
         }
-
     },
+
+
     async deleteSupplier(req, res) {
         const { id } = req.params;
+
         if (id <= 0) {
             return res.status(400).json('Usuário inválido')
         }
@@ -91,24 +99,27 @@ module.exports = {
             await Supplier.destroy({ where: { id } });
             res.status(200).json('Fornecedor removido com sucesso!')
         } catch (error) {
-            return res.status(500).json('Não foi possivel remover')
+            return res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' })
         }
     },
-    async getSupplierPhones(req, res) {
+
+
+    async getAllSupplierPhones(req, res) {
         const { id } = req.params;
 
         try {
             const supPhone = await Supplier.findByPk(id, {
-                include: {
-                    model: Telephone,
-                    attributes: ['number'],
-                }
+                include: { model: Telephone }
             });
+
             res.status(200).json(supPhone);
         } catch (error) {
+            console.log(error);
             return res.status(500).json('Não foi possivel encontrar')
         }
     },
+
+
     async saveSupplierPhone(req, res) {
         const { id } = req.params;
 
@@ -121,41 +132,74 @@ module.exports = {
             await Telephone.create(numberPhone);
             res.status(201).json({ message: 'telefone salvo' });
         } catch (error) {
+            console.log(error);
             res.status(500).json({ message: error });
         }
-
-
-
     },
+
+
     async getOnlyOneSupplierPhone(req, res) { //MÉTODO COM PROBLEMA PARA FILTRAR
         const { id, telphone_id } = req.params;
 
-        const index = Number(telphone_id)
+        const index = Number(telphone_id) - 1;
         try {
-            const phone = await Telephone.find({ where: { supplier_id: id }, attributes: ['number'] });
+            const findPhone = await Supplier.findByPk(id, {
+                include: [{ model: Telephone, as: 'telephones' }]
+            });
 
-            const format = phone.map(data => data.dataValues);
+            if (!findPhone) {
+                return res.status(404).json('O usuário deste telefone não existe');
+            }
+            if (findPhone.telphone.length === 0) {
+                return res.status(404).json('Este cliente não possui telefone cadastrado!');
+            }
 
-            console.log(format);
-            res.json(phone);
+            const choosePhone = findPhone.telphone[index];
+
+            res.json(choosePhone);
+
         } catch (error) {
-            res.status(500).json({ message: error });
+            console.log(error);
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
         }
 
     },
+
+
     async setOnlyOneSupplierPhone(req, res) {
         const { id, telphone_id } = req.params;
 
         const { number } = req.body
+        try {
 
-        const phone = await Telephone.findAll({ where: { supplier_id: id }, attributes: ['number'] });
+            let phone = await Telephone.findByPk(telphone_id);
 
+            phone.number = number;
+            await phone.save();
 
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
+
+        }
     },
+
+
     async deleteOnlyOneSupplierPhone(req, res) {
+        const { telphone_id } = req.params;
 
+        try {
+            await Telephone.destroy({ where: { telphone_id } });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
+
+        }
     },
-    async getSupplierAddress(req, res) {
+
+
+    async getAllSupplierAddress(req, res) {
         const { id } = req.params;
 
 
@@ -168,11 +212,11 @@ module.exports = {
 
             res.status(200).json(address);
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
         }
-
-
     },
+
+
     async saveSupplierAddress(req, res) {
 
         const { id } = req.params;
@@ -185,10 +229,11 @@ module.exports = {
             await Address.create(address);
             res.status(201).json({ message: 'Endereço Salvo' });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
         }
-
     },
+
+
     async setSupplierAddress(req, res) {
         const { id } = req.params;
 
@@ -200,9 +245,11 @@ module.exports = {
             await Address.update(address, { where: { client_id: id } });
             res.status(201).json({ message: 'Endereço Salvo' });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
         }
     },
+
+
     async deleteSupplierAddress(req, res) {
         const { id } = req.params;
 
@@ -212,84 +259,7 @@ module.exports = {
             res.status(201).json({ message: 'Endereço removido' });
 
         } catch (error) {
-            res.status(500).json({ message: error });
-        }
-
-
-    },
-
-
-    async saveNewProduct(req, res) {
-        const { name, price, quantity, company, cnpj, business_name } = req.body;
-        try {
-
-            const findProduct = await Product.findAll({ where: { name } })
-
-            if (findProduct) {
-                return res.status(400).json({ message: 'Este produto já existe em estoque, para repor acesse a rota de fornecedores' })
-            }
-
-            const product = { nome, price, quantity };
-            const newProduct = await Product.create(product);
-
-            if (cnpj.length > 14) {
-                return res.status(400).json({ message: 'CNPJ inválido' })
-            }
-            let supplier = await Supplier.findOne({ where: { cnpj } })
-
-
-            if (!supplier) {
-                const newSupplier = { company, cnpj, business_name };
-                supplier = await Supplier.create(newSupplier);
-            }
-
-            const date_purchase = new Date();
-
-            const purchase_product = {
-                product_id: newProduct.id,
-                supplier_id: supplier.id,
-                date_purchase,
-                quantity,
-            }
-
-
-            await PurchaseProduct.create(purchase_product)
-            res.status(201).json({ message: 'Produto Salvo' })
-
-
-        } catch (error) {
-            res.status(400).json('Erro:' + error);
+            res.status(500).json({ message: 'Não foi possivel efetuar a busca, tente mais tarde' });
         }
     },
-
-    async repurchaseProduct(req, res) {
-        const collectionErrors = [];
-        const { product_id, supplier_id } = req.params;
-        const { quantity } = req.body;
-
-        isEmpty(req.body, collectionErrors);
-
-        const date = new Date();
-
-        if (collectionErrors > 0) {
-            return res.status(400).json({ message: collectionErrors });
-        }
-
-        try {
-            await PurchaseProduct.create({ product_id, supplier_id, date: date, quantity });
-
-            const product = await Product.findByPk({ id: product_id });
-            product.quantity += quantity;
-
-            await product.save();
-
-            res.status(201).json(`O produto ${product.name} foi comprado e agora contem ${product.quantity} em estoque`);
-
-        } catch (error) {
-            res.status(500).json('Erro:' + error);
-
-        }
-
-    },
-
 }

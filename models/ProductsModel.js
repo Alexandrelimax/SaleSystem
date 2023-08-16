@@ -5,15 +5,15 @@ module.exports = class Product extends Model {
   static init(sequelize) {
     super.init(
       {
-        nome: {
+        name: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        preco: {
+        price: {
           type: DataTypes.DECIMAL(10, 2),
           allowNull: false,
         },
-        quantidade: {
+        quantity: {
           type: DataTypes.INTEGER,
           allowNull: false,
         },

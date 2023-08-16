@@ -112,6 +112,22 @@ module.exports =  {
 
         }
 
-    }
+    },
+    // async buyProducts(req,res){
+
+    //     const {product_id} = req.params;
+
+    //     const 
+    // },
+
+
+
 
 }
+
+
+
+
+
+
+

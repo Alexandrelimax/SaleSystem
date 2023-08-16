@@ -15,43 +15,55 @@ module.exports = {
 
         isEmpty(req.body, errorsCollection);
         validName(req.body, errorsCollection);
-        const clientExist = await Client.findAll({
-            where: {
-                [Op.or]: [{ cpf }, { email }]
+
+        try {
+            const clientExist = await Client.findAll({
+                where: {
+                    [Op.or]: [{ cpf }, { email }]
+                }
+            });
+            if (clientExist.length > 0) {
+                errorsCollection.push('Este usuário já existe');
+            };
+
+            const loginExist = await Login.findAll({ where: { user_name } });
+
+            if (cpf.length !== 11) {
+                errorsCollection.push('CPF inválido');
             }
-        });
-        if (clientExist.length > 0) {
-            errorsCollection.push('Este usuário já existe');
-        };
 
-        const loginExist = await Login.findAll({ where: { user_name } });
+            if (loginExist.length > 0) {
+                errorsCollection.push('Este login já existe');
+            };
 
-        if (loginExist.length > 0) {
-            errorsCollection.push('Este login já existe');
-        };
+            if (password !== confirme_password) {
+                errorsCollection.push('A senha e a confirmação de senha são diferentes');
+            }
+            if (errorsCollection.length > 0) {
+                return res.status(400).json({ errors: errorsCollection });
 
-        if (password !== confirme_password) {
-            errorsCollection.push('A senha e a confirmação de senha são diferentes');
+            }
+            const salt = bcrypt.genSaltSync(10);
+            const hashPassword = bcrypt.hashSync(password, salt);
+
+
+            const client = { first_name, last_name, cpf, email }
+
+
+            const clientCreated = await Client.create(client);
+            const client_id = clientCreated.id;
+
+            const login = { user_name, password: hashPassword, client_id };
+
+            await Login.create(login);
+
+            return res.status(201).json({ message: 'Usuário registrado!' });
+
+        } catch (error) {
+            return res.status(500).json({ message: 'Erro ao salvar o usuário, tente mais tarde!' });
         }
-        if (errorsCollection.length > 0) {
-            return res.status(400).json({ errors: errorsCollection });
-
-        }
-        const salt = bcrypt.genSaltSync(10);
-        const hashPassword = bcrypt.hashSync(password, salt);
 
 
-        const client = { first_name, last_name, cpf, email }
-
-
-        const clientCreated = await Client.create(client);
-        const client_id = clientCreated.id;
-
-        const login = { user_name, password: hashPassword, client_id };
-
-        await Login.create(login);
-
-        return res.status(201).json({ message: 'Usuário registrado!' });
 
     },
     showLogin(req, res) {

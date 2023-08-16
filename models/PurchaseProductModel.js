@@ -5,22 +5,20 @@ module.exports = class PurchaseProduct extends Model {
         super.init({
             product_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
                 references: { model: 'products', key: 'id' },
                 onDelete: 'CASCADE'
             },
             supplier_id: {
                 type: DataTypes.INTEGER,
-                allowNull: false,
                 references: { model: 'suppliers', key: 'id' },
                 onDelete: 'RESTRICT'
             },
-            data_compra: {
+            purchase_date: {
                 type: DataTypes.DATE,
                 allowNull:true,
                 
             },
-            quantidade:{
+            quantity:{
                 type:DataTypes.INTEGER,
                 allowNull: false,
             },
